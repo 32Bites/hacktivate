@@ -11,6 +11,8 @@
 # nitoTV, nullpixel, pimskeks, qwertyoruiop, sbingner, siguza
 # haifisch, jndok, jonseals, xerub, lilstevie, psychotea, sferrini
 # Cellebrite (ih8sn0w, cjori, ronyrus et al.)
+#====== Special Note ======
+# Praise the free market!
 #==========================
 
 from bs4 import BeautifulSoup
@@ -129,6 +131,8 @@ if __name__ == "__main__":
 # nitoTV, nullpixel, pimskeks, qwertyoruiop, sbingner, siguza
 # haifisch, jndok, jonseals, xerub, lilstevie, psychotea, sferrini
 # Cellebrite (ih8sn0w, cjori, ronyrus et al.)
+#====== Special Note ======
+# Praise the free market!
 #==========================""")
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--install", help="Installs nessecary dependencies.", action="store_true")
