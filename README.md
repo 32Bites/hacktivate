@@ -2,7 +2,7 @@
 Hacktivates iPhones vulnerable to Checkm8 via the Checkra1n jailbreak.
 
 # Usage
-To install the python dependencies you need pipenv.
+To install the python dependencies you need pipenv. Read here: https://pypi.org/project/pipenv/
 
 ## After pipenv is installed
 1. Open a terminal, and `cd` into the hacktivate directory.
