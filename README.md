@@ -1,5 +1,7 @@
 # hacktivate
 Hacktivates iPhones vulnerable to Checkm8 via the Checkra1n jailbreak.
+# Notice
+Currently this tool ONLY bypasses iCloud. Full hacktivation features are currently being looked into and should come eventually.
 
 # Usage
 To install the python dependencies you need pipenv. Read here: https://pypi.org/project/pipenv/
