@@ -17,13 +17,12 @@
 
 from bs4 import BeautifulSoup
 import requests
-import subprocess
 import shutil
 import errno
 import sys
 import pexpect
-import os
 import paramiko
+import scp
 import argparse
 import time
 import colorama
@@ -62,17 +61,19 @@ def downloadTools():
 			with open("checkra1n.dmg", "wb+") as f:
 				f.write(checkra1n)
 			break
-
-	output = subprocess.run(["hdiutil", "attach", "checkra1n.dmg"], stdout=subprocess.PIPE)
-	path = "/Volumes/" + str(output).split("/Volumes/")[1].replace("\\n')", "/") + "checkra1n.app/"
+	hdiutilProc = pexpect.spawn("hdiutil attach checkra1n.dmg")
+	hdiutilProc.waitnoecho()
+	output = b"".join(hdiutilProc.readlines()).decode("utf-8")
+	#output = subprocess.run(["hdiutil", "attach", "checkra1n.dmg"], stdout=subprocess.PIPE)
+	path = "/Volumes/" + str(output).split("/Volumes/")[1].replace("\r\n", "") + "/checkra1n.app/"
 	copyFolder(path, "/Applications/checkra1n.app/")
 	print(format("- [*] checkra1n installed.", "info"))
 	homebrew = input(format("- [!] Do you have homebrew installed (Y/n) ", "prompt"))
 	if homebrew.lower() == "n":
-		os.system('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"')
+		pexpect.spawn('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"').waitnoecho()
 		print(format("- [*] Homebrew installed.", "info"))
 	print(format("- [*] Installing usbmuxd.", "info"))
-	os.system("brew install usbmuxd")
+	pexpect.spawn("brew install usbmuxd").waitnoecho()
 	print(format("- [*] usbmuxd installed.", "info"))
 
 
@@ -101,18 +102,19 @@ def jailbreakDevice():
 def hacktivateDevice(port):
 	print(format("- [*] Starting iProxy connection.", "info"))
 	iproxyProc = pexpect.spawn(f"iproxy 2222 {str(port)}")
-	ssh_client = paramiko.SSHClient()
+	sshClient = paramiko.SSHClient()
 	input(format("- [!] Unplug the device, and plug it back in. Hit enter when done.", "prompt"))
 	print(format("- [*] Connecting to device SSH via USB.", "info"))
-	ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	ssh_client.connect(hostname="localhost", port=2222, username="root", password="alpine")
+	sshClient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	sshClient.connect(hostname="localhost", port=2222, username="root", password="alpine")
 	print(format("- [*] Running commands.", "info"))
 	commands = ["mount -o rw,union,update /", "rm -rf /Applications/Setup.app", "uicache -p /Applications/Setup.app", "rm /var/mobile/Library/Accounts/Accounts3.sqlite", "rm /var/mobile/Library/Accounts/Accounts3.sqlite-shm", "rm /var/mobile/Library/Accounts/Accounts3.sqlite-wal", "killall backboardd"]
 	for command in commands:
-		stdin, stdout, stderr = ssh_client.exec_command(command)
+		stdin, stdout, stderr = sshClient.exec_command(command)
 		print(format(f"- [*] Running \"{command}\"", "info"))
 		time.sleep(0.5)
-	ssh_client.close()
+	# Write data_ark code.
+	sshClient.close()
 	iproxyProc.terminate(True)
 	print(format("- [*] Done.", "info"))
 	print(format("- [*] You can install Cydia within the checkra1n application.", "info"))
